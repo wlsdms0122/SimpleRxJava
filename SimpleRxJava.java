@@ -1,3 +1,19 @@
+//
+// Console Result
+// ----------- First Example : Observable.create -----------
+// 100
+// 50
+// ----------- Second Example : Error handling   -----------
+// 100
+// 50
+// ----------- Third Example : Map               -----------
+// map : 100 -> 110
+// map : 50 -> 60
+// ----------- Forth Example : FlatMap           -----------
+// flatMap : 10 -> 20
+// flatMap : 20 -> 40
+//
+
 public class SimpleRxJava {
     public static void main(String[] args) {
         System.out.println("----------- First Example : Observable.create -----------");
