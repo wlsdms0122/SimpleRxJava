@@ -6,6 +6,7 @@
 // ----------- Second Example : Error handling   -----------
 // 100
 // 50
+// onError()
 // ----------- Third Example : Map               -----------
 // map : 100 -> 110
 // map : 50 -> 60
@@ -36,6 +37,8 @@ public class SimpleRxJava {
             public void emit(ObservableType<Integer> emitter) {
                 emitter.next(100);
                 emitter.next(50);
+                emitter.error();
+                emitter.next(10);
             }
         }).error(new ErrorHandler() {
             @Override
@@ -55,8 +58,6 @@ public class SimpleRxJava {
             public void emit(ObservableType<Integer> emitter) {
                 emitter.next(100);
                 emitter.next(50);
-                emitter.error();
-                emitter.next(10);
             }
         }).map(new MapTranslatable<Integer, String>() {
             @Override
