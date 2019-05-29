@@ -13,7 +13,14 @@
 // ----------- Forth Example : FlatMap           -----------
 // flatMap : 10 -> 20
 // flatMap : 20 -> 40
+// ----------- Fifth Example : Filter -----------
+// 2
+// 4
+// 6
+// 8
+// 10
 //
+
 
 public class SimpleRxJava {
     public static void main(String[] args) {
@@ -85,6 +92,26 @@ public class SimpleRxJava {
                 System.out.println(element);
             }
         });
+        
+        System.out.println("----------- Fifth Example : Filter -----------");
+        Observable.create(new Emittable<Integer>() {
+            @Override
+            public void emit(ObservableType<Integer> emitter) {
+                for (int i = 1; i <= 10; i++) {
+                    emitter.next(i);
+                }
+            }
+        }).filter(new Filtable<Integer>() {
+            @Override
+            public boolean filter(Integer element) {
+                return element % 2 == 0;
+            }
+        }).subscribe(new Subscribable<Integer>() {
+            @Override
+            public void subscribe(Integer element) {
+                System.out.println(element);
+            }
+        });
     }
     
     public static Observable<Integer> createIntegerObservable() {
@@ -116,6 +143,10 @@ interface ObservableType<T> {
 
 interface Emittable<T> {
     void emit(ObservableType<T> emitter);
+}
+
+interface Filtable<T> {
+    boolean filter(T element);
 }
 
 interface MapTranslatable<T, V> {
@@ -239,6 +270,23 @@ class Observable<T> implements ObservableType<T> {
     public void subscribe(Subscribable<T> subscribable) {
         this.subscribable = subscribable;
         emittable.emit(this);
+    }
+    
+    public Observable<T> filter(final Filtable filtable) {
+        return Observable.create(new Emittable<T>() {
+            @Override
+            public void emit(final ObservableType<T> emitter) {
+                errorHandler = ((Observable) emitter).errorHandler;
+                subscribe(new Subscribable<T>() {
+                    @Override
+                    public void subscribe(T element) {
+                        if (filtable.filter(element)) {
+                            emitter.next(element);
+                        }
+                    }
+                });
+            }
+        });
     }
     
     public <R> Observable<R> map(final MapTranslatable<T, R> translatable) {
